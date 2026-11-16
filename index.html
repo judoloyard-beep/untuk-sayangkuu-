@@ -315,7 +315,30 @@ h1,h2 {font-family:'Playfair Display',serif}
   font-size:22px;
 }
 
-/* VIDEO */
+/* VIDEO GIFT */
+
+.gift-container {
+  text-align:center;
+  padding:30px 0;
+  transition:1s;
+}
+
+.gift-box {
+  font-size:85px;
+  animation:giftBounce 1.5s infinite;
+}
+
+.gift-text {
+  color:#d88eb5;
+  margin-top:12px;
+  font-family:'Playfair Display',serif;
+  font-size:19px;
+}
+
+@keyframes giftBounce {
+  0%,100% {transform:translateY(0) rotate(0)}
+  50% {transform:translateY(-12px) rotate(5deg)}
+}
 
 .video-box {
   width:100%;
@@ -325,11 +348,23 @@ h1,h2 {font-family:'Playfair Display',serif}
   background:white;
   padding:10px;
   box-shadow:0 10px 30px #c8a9c544;
+  opacity:0;
+  transform:scale(.85);
+  transition:all .9s ease;
+  pointer-events:none;
+}
+
+.video-box.show {
+  opacity:1;
+  transform:scale(1);
+  pointer-events:auto;
 }
 
 video {
+  display:block;
   width:100%;
   max-height:450px;
+  object-fit:contain;
   border-radius:13px;
   background:#eee;
 }
@@ -524,10 +559,23 @@ onclick="toggleMusic()" aria-label="Play atau pause musik">
       </p>
     </div>
 
-    <div class="video-box">
-      <video controls playsinline preload="metadata">
+    <!-- GIFT -->
+    <div class="gift-container" id="gift">
+      <div class="gift-box">🎁</div>
+      <p class="gift-text">A little gift for you 💗</p>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-box" id="giftVideo">
+      <video
+        id="surpriseVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      >
         <source src="assets/VID-20261116-WA0021.mp4" type="video/mp4">
-        Your browser does not support video.
       </video>
     </div>
 
@@ -609,6 +657,10 @@ function goTo(id) {
 
   if(id === 'letter') {
     startTyping();
+  }
+
+  if(id === 'ending') {
+    openGift();
   }
 }
 
@@ -720,6 +772,44 @@ function closePhoto() {
 
   document.getElementById('modal').classList.remove('show');
 
+}
+
+// =========================
+// AUTOMATIC GIFT VIDEO
+// =========================
+
+const gift = document.getElementById('gift');
+const giftVideo = document.getElementById('giftVideo');
+const surpriseVideo = document.getElementById('surpriseVideo');
+
+let giftOpened = false;
+
+function openGift() {
+
+  if(giftOpened) return;
+
+  giftOpened = true;
+
+  gift.style.opacity = '0';
+  gift.style.transform = 'scale(.5)';
+
+  setTimeout(async () => {
+
+    gift.style.display = 'none';
+
+    giftVideo.classList.add('show');
+
+    surpriseVideo.currentTime = 0;
+    surpriseVideo.muted = true;
+    surpriseVideo.loop = true;
+
+    try {
+      await surpriseVideo.play();
+    } catch(error) {
+      console.log('Autoplay video ditolak browser.');
+    }
+
+  },900);
 }
 
 // =========================
